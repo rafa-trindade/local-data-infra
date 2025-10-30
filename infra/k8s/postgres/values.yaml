@@ -1,0 +1,8 @@
+global:
+  postgresql:
+    postgresqlDatabase: dw
+    postgresqlUsername: dw_user
+    postgresqlPassword: dw_pass
+primary:
+  persistence:
+    enabled: false

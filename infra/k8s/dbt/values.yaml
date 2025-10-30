@@ -1,0 +1,5 @@
+image:
+  repository: yourdockerhub/dbt
+  tag: latest
+cron:
+  schedule: "@daily"

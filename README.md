@@ -1,4 +1,6 @@
-# 🧩 local-data-infra `em desenvolvimento`
+# 🧩 local-data-infra
+
+`em desenvolvimento`
 
 Infraestrutura modular, reprodutível e portátil para projetos de dados em ambiente local, construída com Terraform, Docker e Kubernetes (Helm).
 
@@ -8,3 +10,5 @@ Infraestrutura modular, reprodutível e portátil para projetos de dados em ambi
 - **PostgreSQL 16** → Data Warehouse relacional
 - **Terraform + Kind** → Cluster Kubernetes local
 - **Helm + Helmfile** → Gerenciamento modular dos serviços
+
+`em desenvolvimento`

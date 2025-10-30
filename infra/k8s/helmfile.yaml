@@ -1,0 +1,24 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: apache-airflow
+    url: https://airflow.apache.org
+
+releases:
+  - name: postgres
+    namespace: data
+    chart: bitnami/postgresql
+    values:
+      - postgres/values.yaml
+
+  - name: airflow
+    namespace: data
+    chart: apache-airflow/airflow
+    values:
+      - airflow/values.yaml
+
+  - name: dbt
+    namespace: data
+    chart: ./dbt
+    values:
+      - dbt/values.yaml

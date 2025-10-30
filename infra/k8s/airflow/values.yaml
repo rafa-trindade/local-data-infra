@@ -1,0 +1,11 @@
+executor: LocalExecutor
+
+config:
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://dw_user:dw_pass@postgres:5432/dw
+
+webserver:
+  port: 8080
+
+persistence:
+  enabled: false
