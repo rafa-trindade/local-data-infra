@@ -1,4 +1,4 @@
-# 🧩 data-platform-infra `em desenvolvimento`
+# 🧩 local-data-infra `em desenvolvimento`
 
 Infraestrutura modular, reprodutível e portátil para projetos de dados em ambiente local, construída com Terraform, Docker e Kubernetes (Helm).
 
