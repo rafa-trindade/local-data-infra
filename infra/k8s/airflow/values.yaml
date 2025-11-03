@@ -1,11 +1,48 @@
+# Configurações para o chart do Apache Airflow
+
+# Define o executor do Airflow
 executor: LocalExecutor
 
+# Configurações do Airflow (airflow.cfg)
 config:
+  # Desabilita o carregamento de DAGs de exemplo
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://dw_user:dw_pass@postgres:5432/dw
+  # Define o executor
+  AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
 
+# Configuração do banco de dados de metadados do Airflow
+externalDatabase:
+  # Nome do host do PostgreSQL dentro do cluster (nome do release do Postgres)
+  host: postgres
+  # Porta do PostgreSQL
+  port: 5432
+  # Nome do banco de dados de metadados (o mesmo definido no values.yaml do Postgres)
+  database: dw
+  # Usuário do banco de dados
+  user: dw_user
+  # Senha do banco de dados. O chart criará um Secret com esta senha.
+  password: dw_pass
+
+# Configuração do Webserver
 webserver:
+  # Porta para acesso externo (NodePort ou LoadBalancer)
+  service:
+    type: NodePort
+    nodePort: 30080 # Porta 8080 do Airflow mapeada para 30080 no Kind
+  # Porta interna do Airflow
   port: 8080
 
+# Configuração de persistência (para DAGs e Logs)
 persistence:
+  # Desabilita a persistência de dados para ambiente local (Kind)
   enabled: false
+
+# Configuração de autenticação
+defaultUser:
+  # Cria o usuário administrador padrão
+  enabled: true
+  username: airflow
+  password: airflow
+  email: admin@example.com
+  firstName: Airflow
+  lastName: User

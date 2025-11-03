@@ -1,33 +1,68 @@
 version: '3.9'
 
+# Define os serviços que compõem o ambiente local
 services:
+
+  # Serviço de banco de dados PostgreSQL
   postgres:
-    image: postgres:16
+    # Usa o Dockerfile customizado para garantir a criação do usuário/banco inicial
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    # Variáveis de ambiente para o usuário/senha/banco padrão do Postgres
+    # Estes são os valores usados pelo Airflow e como base para o script create_project_db.sh
     environment:
       POSTGRES_USER: dw_user
       POSTGRES_PASSWORD: dw_pass
       POSTGRES_DB: dw
+    # Expõe a porta 5432 para acesso externo
     ports:
       - "5432:5432"
+    # Nome do container para facilitar a referência no script create_project_db.sh
+    container_name: postgres
 
+  # Serviço de orquestração Apache Airflow
   airflow:
+    # Usa o Dockerfile customizado para instalar dependências (DBT, psycopg2)
     build:
       context: .
       dockerfile: Dockerfile.airflow
+    # Variáveis de ambiente para configuração do Airflow
     environment:
+      # Desabilita o carregamento de DAGs de exemplo
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      # Define o executor para ambiente local
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://dw_user:dw_pass@postgres/dw
+      # String de conexão completa para o banco de metadados do Airflow
+      # Usa o nome do serviço 'postgres' e a porta 5432
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://dw_user:dw_pass@postgres:5432/dw
+      # Define o usuário e senha de acesso à UI do Airflow
+      - AIRFLOW_USERNAME=airflow
+      - AIRFLOW_PASSWORD=airflow
+    # Expõe a porta 8080 para acesso à UI do Airflow
     ports:
       - "8080:8080"
+    # Mapeia o diretório de DAGs local para o container
+    volumes:
+      - ../dags:/opt/airflow/dags
+    # Garante que o Postgres esteja pronto antes de iniciar o Airflow
     depends_on:
       - postgres
+    # Comando para inicializar o banco de dados e iniciar o scheduler/webserver
+    command: bash -c "airflow db init && airflow users create --username $AIRFLOW_USERNAME --firstname Airflow --lastname User --role Admin --email admin@example.com --password $AIRFLOW_PASSWORD && airflow webserver"
 
+  # Serviço para execução de comandos DBT
   dbt:
+    # Usa o Dockerfile customizado para instalar o DBT
     build:
       context: .
       dockerfile: Dockerfile.dbt
+    # Mapeia o diretório do projeto DBT local para o container
     volumes:
-      - ../dbt_project:/dbt
+      - ../dbt_project:/app
+    # Garante que o Postgres esteja pronto
     depends_on:
       - postgres
+    # O ENTRYPOINT no Dockerfile.dbt já é 'dbt', então este serviço é usado para rodar comandos manuais:
+    # Ex: docker-compose run dbt debug --profiles-dir .
+    # Ex: docker-compose run dbt run --profiles-dir .

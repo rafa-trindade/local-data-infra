@@ -1,4 +1,17 @@
+# Usa a imagem oficial do Apache Airflow como base
+# Versão 2.9.0 com Python 3.10
 FROM apache/airflow:2.9.0-python3.10
+
+# Muda para o usuário root para instalar dependências do sistema e Python
 USER root
-RUN pip install psycopg2-binary dbt-core dbt-postgres
+
+# Instala dependências Python necessárias para Airflow se conectar ao Postgres e rodar DBT
+# psycopg2-binary: Driver para PostgreSQL
+# dbt-core e dbt-postgres: Permite que o Airflow execute comandos DBT
+RUN pip install --no-cache-dir \
+    psycopg2-binary \
+    dbt-core \
+    dbt-postgres
+
+# Retorna para o usuário padrão do Airflow para segurança
 USER airflow

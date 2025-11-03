@@ -1,8 +1,25 @@
+# Configurações globais para o chart do PostgreSQL (Bitnami)
 global:
+  # Define o nome do banco de dados inicial
   postgresql:
     postgresqlDatabase: dw
+    # Define o usuário administrador inicial
     postgresqlUsername: dw_user
+    # Define a senha do usuário administrador inicial
+    # Em produção, esta senha deve ser gerenciada por um Secret externo ou Vault.
     postgresqlPassword: dw_pass
+
+# Configurações para o nó primário do PostgreSQL
 primary:
+  # Desabilita a persistência de dados para ambiente local (Kind)
+  # Isso significa que os dados serão perdidos ao desligar o cluster
   persistence:
     enabled: false
+
+# Configurações de serviço
+service:
+  # Expõe a porta 5432 do PostgreSQL
+  ports:
+    postgresql: 5432
+  # Tipo de serviço para acesso interno ao cluster
+  type: ClusterIP

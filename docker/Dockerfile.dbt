@@ -1,4 +1,18 @@
+# Usa uma imagem slim do Python 3.10 como base
 FROM python:3.10-slim
+
+# Define o diretório de trabalho dentro do container
 WORKDIR /app
-RUN pip install dbt-core dbt-postgres psycopg2-binary
+
+# Instala as dependências Python necessárias para o DBT
+# dbt-core: O core do DBT
+# dbt-postgres: Adaptador para PostgreSQL
+# psycopg2-binary: Driver para PostgreSQL
+RUN pip install --no-cache-dir \
+    dbt-core \
+    dbt-postgres \
+    psycopg2-binary
+
+# Define o ponto de entrada do container como o comando 'dbt'
+# Isso permite executar comandos como 'docker-compose run dbt run'
 ENTRYPOINT ["dbt"]

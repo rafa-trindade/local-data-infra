@@ -1,0 +1,21 @@
+# Exemplo de profiles.yml para uso com o projeto local-data-infra
+
+# Este arquivo deve ser copiado para 'profiles.yml' do projeto DBT
+# e as variáveis de ambiente (DBT_USER, DBT_PASS, DBT_DBNAME) devem ser definidas
+# antes de rodar o DBT.
+
+local_data_infra:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      # Host para o ambiente Kubernetes (acesso interno ao cluster)
+      host: postgres.data.svc.cluster.local
+      port: 5432
+      # Usuário e senha do projeto (criados via create_project_db.sh)
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASS') }}"
+      # Nome do banco de dados do projeto (criado via create_project_db.sh)
+      dbname: "{{ env_var('DBT_DBNAME') }}"
+      schema: public
+      threads: 4

@@ -1,24 +1,58 @@
+# Define os repositórios de Helm a serem usados
 repositories:
+  # Repositório Bitnami para PostgreSQL
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
+  # Repositório oficial do Apache Airflow
   - name: apache-airflow
     url: https://airflow.apache.org
 
+# Define as releases (implantações) a serem gerenciadas pelo Helmfile
 releases:
+  # 1. PostgreSQL (Data Warehouse)
   - name: postgres
+    # Namespace onde o serviço será implantado
     namespace: data
+    # Chart do Bitnami
     chart: bitnami/postgresql
+    # Arquivo de valores para customização
     values:
       - postgres/values.yaml
+    # Garante que o namespace 'data' exista antes de implantar
+    needs:
+      - namespace/data
 
+  # 2. Apache Airflow (Orquestração)
   - name: airflow
     namespace: data
     chart: apache-airflow/airflow
     values:
+      # Arquivo de valores para customização
       - airflow/values.yaml
+    # Garante que o PostgreSQL esteja pronto antes de implantar o Airflow
+    needs:
+      - postgres
 
+  # 3. DBT (Transformação)
   - name: dbt
     namespace: data
+    # Usa um chart local (diretório ./dbt)
     chart: ./dbt
     values:
       - dbt/values.yaml
+    needs:
+      - postgres
+
+# Define os namespaces a serem criados
+helmDefaults:
+  # Cria o namespace 'data' se ele não existir
+  createNamespace: true
+
+# Cria o namespace 'data'
+releases:
+  - name: data
+    namespace: data
+    chart: stable/namespace
+    # Este chart é um placeholder, o helmDefaults.createNamespace já faz o trabalho
+    # Mas é mantido para clareza e compatibilidade com helmfile.yaml original
+    installed: false # Não instala um chart, apenas garante o namespace

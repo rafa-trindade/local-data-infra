@@ -1,4 +1,6 @@
 apiVersion: v2
-name: dbt
+name: dbt-runner
+description: Um chart Helm para implantar um Pod executável do DBT.
+type: application
 version: 0.1.0
-description: Espaço reservado para o chart do job do DBT
+appVersion: "1.0.0"

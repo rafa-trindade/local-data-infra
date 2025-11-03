@@ -1,5 +1,37 @@
+# Configurações para o Pod executável do DBT
+
+# Imagem Docker a ser usada para o Pod do DBT
+# Deve ser a mesma imagem usada no Docker Compose (ou uma similar)
 image:
-  repository: yourdockerhub/dbt
+  repository: dbt-runner
   tag: latest
-cron:
-  schedule: "@daily"
+  pullPolicy: IfNotPresent
+
+# Configurações de recursos
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Variáveis de ambiente para o Pod do DBT
+env:
+  # Variáveis de conexão com o PostgreSQL
+  # O host é o nome do serviço Kubernetes do PostgreSQL
+  DBT_HOST: postgres.data.svc.cluster.local
+  DBT_PORT: "5432"
+  DBT_USER: dw_user
+  DBT_PASS: dw_pass
+  DBT_DBNAME: dw
+
+# Configuração de volume para o projeto DBT
+volumes:
+  # Volume para o projeto DBT 
+  dbtProject:
+    # Tipo de volume (ex: PersistentVolumeClaim, HostPath, etc.)
+    # Para Kind, HostPath é comum, mas um ConfigMap ou EmptyDir é mais portátil
+    # Usaremos um ConfigMap para simular a montagem de um projeto DBT
+    # Em um cenário real, o projeto DBT seria injetado via Init Container ou Volume
+    type: EmptyDir

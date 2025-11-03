@@ -1,2 +1,7 @@
+# Usa a imagem oficial do PostgreSQL 16
 FROM postgres:16
+
+# Copia o script de inicialização para o diretório de entrada do Docker
+# Este script será executado na primeira vez que o container for iniciado
+# Ele cria o banco de dados 'dw' e o usuário 'dw_user' com a senha 'dw_pass'
 COPY ../scripts/init_postgres.sql /docker-entrypoint-initdb.d/
